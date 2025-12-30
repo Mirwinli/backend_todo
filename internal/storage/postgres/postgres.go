@@ -23,7 +23,7 @@ func New(db *pgxpool.Pool) *Storage {
 
 func (s Storage) CreateTask(ctx context.Context, title string, description string, uid int64) error {
 	const op = "storage.CreateTask"
-	sql := "INSERT INTO tasks (title,description,uid) VALUES ($1,$2,$3)"
+	sql := "INSERT INTO tasks (title,description,user_id) VALUES ($1,$2,$3)"
 
 	teg, err := s.db.Exec(ctx, sql, title, description, uid)
 	if err != nil {
@@ -38,7 +38,7 @@ func (s Storage) CreateTask(ctx context.Context, title string, description strin
 func (s Storage) DeleteTask(ctx context.Context, title string, uid int64) error {
 	const op = "storage.DeleteTask"
 
-	sql := "DELETE FROM tasks WHERE title=$1 AND uid=$2"
+	sql := "DELETE FROM tasks WHERE title=$1 AND user_id=$2"
 	teg, err := s.db.Exec(ctx, sql, title, uid)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
@@ -50,7 +50,7 @@ func (s Storage) DeleteTask(ctx context.Context, title string, uid int64) error 
 }
 
 func (s Storage) DoneTask(ctx context.Context, title string, uid int64) error {
-	sql := "UPDATE tasks SET is_done=TRUE WHERE title=$1 AND uid=$2"
+	sql := "UPDATE tasks SET is_done=TRUE WHERE title=$1 AND user_id=$2"
 
 	teg, err := s.db.Exec(ctx, sql, title, uid)
 	if err != nil {
@@ -63,7 +63,7 @@ func (s Storage) DoneTask(ctx context.Context, title string, uid int64) error {
 }
 
 func (s Storage) ListTasks(ctx context.Context, uid int64) ([]models.Task, error) {
-	sql := "SELECT title,description,task_id,created_at,done_at,duration,is_done FROM tasks WHERE uid=$1"
+	sql := "SELECT title,description,id,created_at,done_at,duration,is_done FROM tasks WHERE user_id=$1"
 
 	rows, err := s.db.Query(ctx, sql, uid)
 	if err != nil {

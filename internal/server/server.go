@@ -81,11 +81,17 @@ func (s *Server) ListTasks(ctx context.Context, req *todov1.ListRequest) (*todov
 			Title:       task.Title,
 			Description: task.Description,
 			CreateAt:    timestamppb.New(task.CreatedAt),
-			Duration:    durationpb.New(*task.Duration),
 			IsDone:      task.IsDone,
-			DoneAt:      timestamppb.New(*task.DoneAt),
 			TaskId:      task.TaskId,
 		}
+		if task.Duration != nil {
+			grpcTask.Duration = durationpb.New(*task.Duration)
+		}
+
+		if task.DoneAt != nil {
+			grpcTask.DoneAt = timestamppb.New(*task.DoneAt)
+		}
+
 		grpcTasks = append(grpcTasks, grpcTask)
 	}
 	return &todov1.ListResponse{
