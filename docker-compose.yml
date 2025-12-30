@@ -1,0 +1,13 @@
+services:
+  Todo:
+    image: postgres
+    container_name: todo-postgres
+    ports:
+      - "4444:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - todo_postgres_data:/var/lib/postgresql
+
+volumes:
+  todo_postgres_data:
